@@ -34,6 +34,10 @@ jobs:
         working-directory: ./backend
         run: npx prisma generate
 
+      - name: Initialize Test Database Schema
+        working-directory: ./backend
+        run: npx prisma db push --accept-data-loss
+
       - name: Run Backend Unit Tests
         working-directory: ./backend
         run: npm run test

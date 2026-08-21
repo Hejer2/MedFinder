@@ -549,7 +549,7 @@ describe('Security & Authorization Hardening (e2e)', () => {
     beforeAll(async () => {
       const med = await prisma.medicine.create({
         data: {
-          pharmacyId: pharmacyProfileId,
+          pharmacy: { connect: { id: pharmacyProfileId } },
           name: 'Limited Stock Antibiotic',
           price: 25.0,
           stock: 3,

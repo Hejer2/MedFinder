@@ -113,7 +113,7 @@ export class PharmaciesService {
 
     return this.prisma.medicine.create({
       data: {
-        pharmacyId: pharmacy.id,
+        pharmacy: { connect: { id: pharmacy.id } },
         name: data.name,
         description: data.description,
         price: Number(data.price),
