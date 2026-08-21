@@ -374,9 +374,23 @@ describe('Security & Authorization Hardening (e2e)', () => {
 
   describe('6. Payment Verification Security', () => {
     beforeAll(async () => {
+      let targetOrderId = orderId;
+      if (!targetOrderId) {
+        const ord = await prisma.order.create({
+          data: {
+            patientId: patientAId,
+            pharmacyId: pharmacyProfileId,
+            totalPrice: 31.0,
+            status: 'PENDING',
+          },
+        });
+        targetOrderId = ord.id;
+        orderId = ord.id;
+      }
+
       const payRecord = await prisma.payment.create({
         data: {
-          orderId,
+          orderId: targetOrderId,
           amount: 31.0,
           method: 'Card',
           status: 'PENDING',
