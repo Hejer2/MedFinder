@@ -1,0 +1,33 @@
+name: Security & Vulnerability Scan
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  schedule:
+    - cron: '0 0 * * 0' # Weekly scan every Sunday
+
+jobs:
+  npm-audit:
+    name: Dependency Vulnerability Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Backend Security Audit (Fails on Critical)
+        working-directory: ./backend
+        run: |
+          npm audit --audit-level=critical
+
+      - name: Frontend Security Audit (Fails on Critical)
+        working-directory: ./frontend
+        run: |
+          npm audit --audit-level=critical
