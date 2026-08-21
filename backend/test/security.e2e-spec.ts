@@ -560,14 +560,25 @@ describe('Security & Authorization Hardening (e2e)', () => {
     let stockMedId: string;
 
     beforeAll(async () => {
-      if (!pharmacyProfileId) {
-        const pharmRecord = await prisma.pharmacy.findUnique({ where: { userId: pharmacyUserId } });
-        if (pharmRecord) pharmacyProfileId = pharmRecord.id;
+      let activePharmacyId = pharmacyProfileId;
+      if (!activePharmacyId) {
+        let pharmRecord = await prisma.pharmacy.findUnique({ where: { userId: pharmacyUserId } });
+        if (!pharmRecord) {
+          pharmRecord = await prisma.pharmacy.create({
+            data: {
+              userId: pharmacyUserId,
+              address: '789 Pharma Plaza',
+              phone: '+21671000111',
+            },
+          });
+        }
+        activePharmacyId = pharmRecord.id;
+        pharmacyProfileId = pharmRecord.id;
       }
 
       const med = await prisma.medicine.create({
         data: {
-          pharmacy: { connect: { id: pharmacyProfileId } },
+          pharmacy: { connect: { id: activePharmacyId } },
           name: 'Limited Stock Antibiotic',
           price: 25.0,
           stock: 3,
