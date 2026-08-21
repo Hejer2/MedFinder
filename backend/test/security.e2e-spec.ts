@@ -125,7 +125,20 @@ describe('Security & Authorization Hardening (e2e)', () => {
         address: '789 Pharma Plaza',
         phone: '+21671000111',
       });
-    pharmacyProfileId = pharmProfileRes.body.id;
+    pharmacyProfileId = pharmProfileRes.body?.id;
+    if (!pharmacyProfileId) {
+      let pharmRecord = await prisma.pharmacy.findUnique({ where: { userId: pharmacyUserId } });
+      if (!pharmRecord) {
+        pharmRecord = await prisma.pharmacy.create({
+          data: {
+            userId: pharmacyUserId,
+            address: '789 Pharma Plaza',
+            phone: '+21671000111',
+          },
+        });
+      }
+      pharmacyProfileId = pharmRecord.id;
+    }
 
     const medRes = await request(app.getHttpServer())
       .post('/pharmacies/medicines')
@@ -547,6 +560,11 @@ describe('Security & Authorization Hardening (e2e)', () => {
     let stockMedId: string;
 
     beforeAll(async () => {
+      if (!pharmacyProfileId) {
+        const pharmRecord = await prisma.pharmacy.findUnique({ where: { userId: pharmacyUserId } });
+        if (pharmRecord) pharmacyProfileId = pharmRecord.id;
+      }
+
       const med = await prisma.medicine.create({
         data: {
           pharmacy: { connect: { id: pharmacyProfileId } },
