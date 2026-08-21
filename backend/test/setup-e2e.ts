@@ -2,8 +2,13 @@ import * as path from 'path';
 
 // Calculate deterministic absolute path to the isolated E2E test database
 const backendDir = path.resolve(__dirname, '..');
-const testDbFile = path.resolve(backendDir, 'prisma', 'test_e2e.db');
-const testDbUrl = 'file:' + testDbFile.replace(/\\/g, '/');
+let testDbUrl = process.env.DATABASE_URL || '';
+
+if (!testDbUrl || testDbUrl.startsWith('file:.')) {
+  const dbName = testDbUrl ? path.basename(testDbUrl.replace('file:', '')) : 'test_e2e.db';
+  const testDbFile = path.resolve(backendDir, 'prisma', dbName);
+  testDbUrl = 'file:' + testDbFile.replace(/\\/g, '/');
+}
 
 // Enforce test environment variables in worker
 process.env.NODE_ENV = 'test';

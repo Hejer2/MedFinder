@@ -11,7 +11,7 @@ jobs:
     name: Backend CI (Test & Build)
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: 'file:./test_ci.db'
+      DATABASE_URL: "file:${{ github.workspace }}/backend/prisma/test_ci.db"
       JWT_SECRET: 'test_jwt_secret_ci_key_32_characters_minimum'
       REFRESH_SECRET: 'test_refresh_secret_ci_key_32_characters'
 

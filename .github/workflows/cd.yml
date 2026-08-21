@@ -34,7 +34,7 @@ jobs:
         env:
           JWT_SECRET: 'test_jwt_secret_ci_key_32_characters_minimum'
           REFRESH_SECRET: 'test_refresh_secret_ci_key_32_characters'
-          DATABASE_URL: 'file:./test_cd.db'
+          DATABASE_URL: "file:${{ github.workspace }}/backend/prisma/test_cd.db"
 
       - name: Verify Frontend Unit Tests & Build
         working-directory: ./frontend

@@ -576,6 +576,17 @@ describe('Security & Authorization Hardening (e2e)', () => {
     beforeAll(async () => {
       let activePharmacyId = pharmacyProfileId;
       if (!activePharmacyId) {
+        if (!pharmacyUserId) {
+          const pharmUser = await prisma.user.create({
+            data: {
+              name: 'Fallback Pharmacy User',
+              email: `pharmacy_fallback_${Date.now()}@test.com`,
+              password: 'Password123!',
+              role: 'PHARMACY',
+            },
+          });
+          pharmacyUserId = pharmUser.id;
+        }
         let pharmRecord = await prisma.pharmacy.findUnique({ where: { userId: pharmacyUserId } });
         if (!pharmRecord) {
           pharmRecord = await prisma.pharmacy.create({

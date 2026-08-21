@@ -1,18 +1,14 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
-import * as fs from 'fs';
 
 export default async function globalSetup() {
   const backendDir = path.resolve(__dirname, '..');
-  const testDbFile = path.resolve(backendDir, 'prisma', 'test_e2e.db');
-  const testDbUrl = 'file:' + testDbFile.replace(/\\/g, '/');
+  let testDbUrl = process.env.DATABASE_URL || '';
 
-  try {
-    if (fs.existsSync(testDbFile)) {
-      fs.unlinkSync(testDbFile);
-    }
-  } catch {
-    // Ignored
+  if (!testDbUrl || testDbUrl.startsWith('file:.')) {
+    const dbName = testDbUrl ? path.basename(testDbUrl.replace('file:', '')) : 'test_e2e.db';
+    const testDbFile = path.resolve(backendDir, 'prisma', dbName);
+    testDbUrl = 'file:' + testDbFile.replace(/\\/g, '/');
   }
 
   console.log('🔄 Initializing test database schema for E2E tests at:', testDbUrl);
