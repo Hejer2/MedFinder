@@ -641,7 +641,7 @@ describe('Security & Authorization Hardening (e2e)', () => {
 
       // Verify stock was reduced from 3 to 1
       const updatedMed = await prisma.medicine.findUnique({ where: { id: stockMedId } });
-      expect(updatedMed.stock).toBe(1);
+      expect(updatedMed?.stock).toBe(1);
     });
   });
 
@@ -682,10 +682,10 @@ describe('Security & Authorization Hardening (e2e)', () => {
         .expect(200);
 
       const updatedOrder = await prisma.order.findUnique({ where: { id: order.id } });
-      expect(updatedOrder.status).toBe('PAID');
+      expect(updatedOrder?.status).toBe('PAID');
 
       const updatedPayment = await prisma.payment.findUnique({ where: { id: payment.id } });
-      expect(updatedPayment.status).toBe('COMPLETED');
+      expect(updatedPayment?.status).toBe('COMPLETED');
     });
   });
 });

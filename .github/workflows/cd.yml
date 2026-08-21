@@ -101,11 +101,13 @@ jobs:
     name: Trigger Cloud Deployment (Render / Webhook)
     needs: build-and-publish
     runs-on: ubuntu-latest
-    if: ${{ secrets.RENDER_DEPLOY_HOOK != '' }}
+    env:
+      RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
 
     steps:
       - name: Trigger Render Webhook Deployment
+        if: env.RENDER_DEPLOY_HOOK != ''
         run: |
           echo "🚀 Triggering cloud deployment via secure deploy hook..."
-          curl -s -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+          curl -s -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
           echo "✅ Cloud deploy webhook triggered successfully."
